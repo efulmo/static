@@ -1,41 +1,62 @@
 <html>
   <head>
+    <title>AES cipher</title>
     <script src="gibberish-aes-1.0.0.js"></script>
   </head>
   <body>
     <p>
-      Input: <textarea id="input" cols="80"></textarea>
+      This page allows to encrypt/decrypt arbitrary text according to the AES algorithm. Just paste data you would like to encrypt/decrypt, enter password and press a button. All the job is done directly in the browser, no data is sent the server. 
     </p>
-    <p>
-      Output: <textarea id="output" cols="80"></textarea>
-    </p>
-    <p>
-      Password: <input type="text" id="password"/>
-    </p>
-    <button id="encode"/>Encode</button>
-    <button id="decode"/>Decode</button>
+    <table>
+      <tr>
+        <td>Decrypted Text:</td>
+        <td>
+          <textarea id="decryptedText" cols="80">encrypt me</textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>Encrypted Text:</td>
+        <td>
+          <textarea id="encryptedText" cols="80">decrypt me</textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td>
+          <input type="text" id="password" value="somePassword"/>
+          <button id="encrypt"/>Encrypt</button>
+          <button id="decrypt"/>Decrypt</button>
+        </td>
+      </tr>
+    </table>
     <script>
-      var encodeButton = document.getElementById('encode');
-      var decodeButton = document.getElementById('decode');
-      var inputArea = document.getElementById('input');
-      var outputArea = document.getElementById('output');
-      var passwordField = document.getElementById('password');
-      
-      encodeButton.onclick = function(event) {
-        try {
-          outputArea.value = GibberishAES.enc(inputArea.value, passwordField.value);
-        } catch (error) {
-          alert('An error occured: ' + error.message);
+      (function () {
+        var encryptButton = document.getElementById('encrypt');
+        var decryptButton = document.getElementById('decrypt');
+        var decryptedTextArea = document.getElementById('decryptedText');
+        var encryptedTextArea = document.getElementById('encryptedText');
+        var passwordField = document.getElementById('password');
+        
+        encryptButton.onclick = function(event) {
+          funAndCatchErrors(function () {
+            encryptedTextArea.value = GibberishAES.enc(decryptedTextArea.value, passwordField.value);
+          });
+        };
+        
+        decryptButton.onclick = function(event) {
+          funAndCatchErrors(function () {
+            decryptedTextArea.value = GibberishAES.dec(encryptedTextArea.value, passwordField.value);  
+          });
+        };
+        
+        function funAndCatchErrors(fn) {
+          try {
+            fn.call();
+          } catch (error) {
+            alert('An error occured: ' + error);
+          }
         }
-      };
-      
-      decodeButton.onclick = function(event) {
-        try {
-          outputArea.value = GibberishAES.dec(inputArea.value, passwordField.value);  
-        } catch (error) {
-          alert('An error occured: ' + error);
-        }
-      };
+      })();
     </script>
   </body>
 </html>
